@@ -10,7 +10,9 @@ def createDataSet():
 
 
 def classify0(inX, dataSet, labels, k):
+    # inX:用于分类的输入向量，dataSet：训练集数据，labels：训练集标签向量，k：用于选择最近邻的数目
     dataSetSize = dataSet.shape[0]
+    # 计算距离（欧式距离）
     diffMat = np.tile(inX, (dataSetSize, 1)) - dataSet
     sqDiffMat = diffMat ** 2
     sqDistances = sqDiffMat.sum(axis=1)
@@ -27,8 +29,8 @@ def classify0(inX, dataSet, labels, k):
 
 def file2matrix(filename):
     fr = open(filename)
-    numberOfLines = len(fr.readlines())
-    returnMat = np.zeros((numberOfLines, 3))
+    numberOfLines = len(fr.readlines())     # 数据集的数量
+    returnMat = np.zeros((numberOfLines, 3))    # 初始化数组用0填充
     classLabelVector = []
     fr = open(filename)
     index = 0
@@ -41,9 +43,10 @@ def file2matrix(filename):
     return returnMat, classLabelVector
 
 
+#归一化特征值，是的每个特征值在0-1之间，计算公式：newValue = (oldValue-min)/(max-min)
 def autoNorm(dataSet):
-    minVals = dataSet.min(0)
-    maxVals = dataSet.max(0)
+    minVals = dataSet.min(0)    #每一列的最小值
+    maxVals = dataSet.max(0)    #每一列的最大值
     ranges = maxVals - minVals
     normDataSet = np.zeros(np.shape(dataSet))
     m = dataSet.shape[0]
@@ -53,14 +56,14 @@ def autoNorm(dataSet):
 
 
 def datingClassTest():
-    hoRatio = 0.50
+    hoRatio = 0.20  # 测试集的比例
     datingDataMat, datingLabels = file2matrix('datingTestSet2.txt')
     normMat, ranges, minVals = autoNorm(datingDataMat)
     m = normMat.shape[0]
     numTestVecs = int(m * hoRatio)
     errorCount = 0.0
     for i in range(numTestVecs):
-        classifierResult = classify0(normMat[i, :], normMat[numTestVecs:m, :], datingLabels[numTestVecs:m], 3)
+        classifierResult = classify0(normMat[i, :], normMat[numTestVecs:m, :], datingLabels[numTestVecs:m], 7)
 
         print("He is %d years old" % (25))
         print("the classifier came back with: %d, the real answer is: %d" % (classifierResult, datingLabels[i]))
@@ -79,6 +82,7 @@ def img2vector(filename):
     return returnVect
 
 
+# 手写体识别
 def handwritingClassTest():
     hwLabels = []
     trainingFileList = listdir('trainingDigits')
@@ -111,7 +115,8 @@ def test():
     # print(classify0([0,0], group, labels, 3))
     # dataDataMat, datingLabels = file2matrix('datingTestSet2.txt')
     # autoNorm(dataDataMat)
-    handwritingClassTest()
+    # handwritingClassTest()
+    datingClassTest()
 
 
 if __name__ == '__main__':
